@@ -32,8 +32,9 @@ create table boards(
     content longtext,
     usersId int,
     createdAt TIMESTAMP,
-    CONSTRAINT fk_users_id FOREIGN KEY(usersId) REFERENCES users(id)
-);insert into users(username, password, email, createdAt) values('ssar', '1234', 'ssar@nate.com', NOW());
+);
+
+insert into users(username, password, email, createdAt) values('ssar', '1234', 'ssar@nate.com', NOW());
 insert into users(username, password, email, createdAt) values('cos', '1234', 'cos@nate.com', NOW());
 insert into users(username, password, email, createdAt) values('hong', '1234', 'hong@nate.com', NOW());
 COMMIT;
