@@ -21,18 +21,18 @@ import site.metacoding.red.web.dto.request.users.UpdateDto;
 
 @RequiredArgsConstructor
 @Controller
-public class UserController {
+public class UsersController {
 
 	private final UsersService usersService;
 	private final HttpSession session;
 	
-	@GetMapping("joinForm")//인증이 필요한페이지는 앞에 도메인을 적지않는다
+	@GetMapping("/joinForm")
 	public String joinForm() {
 		return "users/joinForm";
 	}
 	
-	@GetMapping("loginForm")//쿠키배워보기
-	public String loginForm() {
+	@GetMapping("/loginForm")
+	public String loginForm() { // 쿠키 배워보기
 		return "users/loginForm";
 	}
 	
@@ -43,7 +43,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/login")
-	public @ResponseBody String login(LoginDto loginDto) { //@responsebody를 붙이면 데이터를 리턴함
+	public @ResponseBody String login(LoginDto loginDto) {
 		Users principal = usersService.로그인(loginDto);
 		
 		if(principal == null) {
@@ -57,7 +57,7 @@ public class UserController {
 	@GetMapping("/users/{id}")
 	public String updateForm(@PathVariable Integer id, Model model) {
 		Users usersPS = usersService.회원정보보기(id);
-		model.addAttribute("users",usersPS);
+		model.addAttribute("users", usersPS);
 		return "users/updateForm";
 	}
 	
@@ -68,7 +68,7 @@ public class UserController {
 	}
 	
 	@DeleteMapping("/users/{id}")
-	public String delete(@PathVariable Integer id) {
+	public @ResponseBody String delete(@PathVariable Integer id) {
 		usersService.회원탈퇴(id);
 		return Script.href("/loginForm", "회원탈퇴가 완료되었습니다");
 	}

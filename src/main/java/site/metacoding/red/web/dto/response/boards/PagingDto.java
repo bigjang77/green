@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class PagingDto {
+	private boolean isNotResult;
 	private Integer currentBlock;// 변수
 	private Integer blockCount;//상수 한블록에 페이지 넘버개수(5) 1-5, 6-10 
 	private Integer startPageNum;//변수 1 ->6 -> 11
