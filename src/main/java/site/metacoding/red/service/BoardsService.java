@@ -30,6 +30,9 @@ public class BoardsService {
 			page = 0;
 		}
 		int startNum = page * 3;
+		System.out.println("==========");
+		System.out.println("keyword : "+keyword);
+		System.out.println("==========");
 		List<MainDto> boardsList = boardsDao.findAll(startNum, keyword);
 		PagingDto pagingDto = boardsDao.paging(page, keyword);
 		if (boardsList.size() == 0)
@@ -49,7 +52,6 @@ public class BoardsService {
 		Boards boardsPS = boardsDao.findById(id);
 		
 		if(boardsPS == null) {
-			// 이 부분은 나중에 처리!! (exception 처리하는 법 따로 배울 예정)
 		}
 
 		// 2. 변경
@@ -63,7 +65,6 @@ public class BoardsService {
 		Boards boardsPS = boardsDao.findById(id);
 		
 		if(boardsPS == null) {
-			// 이 부분은 나중에 처리!! (exception 처리하는 법 따로 배울 예정)
 		}
 		
 		boardsDao.deleteById(id);

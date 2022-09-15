@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import site.metacoding.red.utill.Script;
 import site.metacoding.red.web.dto.request.users.JoinDto;
 import site.metacoding.red.web.dto.request.users.LoginDto;
 import site.metacoding.red.web.dto.request.users.UpdateDto;
+import site.metacoding.red.web.dto.response.CMRespDto;
 
 @RequiredArgsConstructor
 @Controller
@@ -25,6 +27,14 @@ public class UsersController {
 
 	private final UsersService usersService;
 	private final HttpSession session;
+	
+	//http://localhost:8000/users/usernameSameCheck?username=ssar
+	@GetMapping("/users/usernameSameCheck")
+	public @ResponseBody CMRespDto<Boolean> usernameSameCheck(String username) {
+		boolean isSame = usersService.유저네임중복확인(username);
+		return new CMRespDto<>(1, "성공", isSame);
+	}
+	
 	
 	@GetMapping("/joinForm")
 	public String joinForm() {
@@ -37,9 +47,9 @@ public class UsersController {
 	}
 	
 	@PostMapping("/join")
-	public String join(JoinDto joinDto) {
+	public @ResponseBody CMRespDto<?> join(@RequestBody JoinDto joinDto) {
 		usersService.회원가입(joinDto);
-		return "redirect:/loginForm";
+		return new  CMRespDto<>(1, "회원가입성공", null);
 	}
 	
 	@PostMapping("/login")
