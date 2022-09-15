@@ -53,15 +53,15 @@ public class UsersController {
 	}
 	
 	@PostMapping("/login")
-	public @ResponseBody String login(LoginDto loginDto) {
+	public @ResponseBody CMRespDto<?> login(@RequestBody LoginDto loginDto) {
 		Users principal = usersService.로그인(loginDto);
 		
 		if(principal == null) {
-			return Script.back("아이디 혹은 비밀번호가 틀렸습니다");
+			return new  CMRespDto<>(-1, "로그인실패", null);
 		}
 		
 		session.setAttribute("principal", principal);
-		return Script.href("/");
+		return new  CMRespDto<>(1, "로그인성공", null);
 	}
 	
 	@GetMapping("/users/{id}")
@@ -72,15 +72,16 @@ public class UsersController {
 	}
 	
 	@PutMapping("/users/{id}")
-	public String update(@PathVariable Integer id, UpdateDto updateDto) {
-		usersService.회원수정(id, updateDto);
-		return "redirect:/users/"+id;
+	public @ResponseBody CMRespDto<?> update(@PathVariable Integer id, @RequestBody UpdateDto updateDto) {
+		Users usersPS = usersService.회원수정(id, updateDto);
+		session.setAttribute("principal", usersPS);//세션동기화
+		return new CMRespDto<>(1, "회원수정성공", null);
 	}
 	
 	@DeleteMapping("/users/{id}")
-	public @ResponseBody String delete(@PathVariable Integer id) {
+	public @ResponseBody CMRespDto<?> delete(@PathVariable Integer id) {
 		usersService.회원탈퇴(id);
-		return Script.href("/loginForm", "회원탈퇴가 완료되었습니다");
+		return new CMRespDto<>(1, "회원탈퇴성공", null);
 	}
 	
 	@GetMapping("/logout")

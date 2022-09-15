@@ -34,7 +34,7 @@
 				email: $("#email").val()
 		};
 		
-		//2.AJax 통신
+		//1.AJax 통신
 		$.ajax("/join",{
 			type:"POST",
 			dataType: "json",
@@ -44,7 +44,7 @@
 			}
 		}).done((res)=>{
 			if(res.code == 1){
-				location.href="/";
+				location.href="/loginForm";
 			}
 		});
 	});

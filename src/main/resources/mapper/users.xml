@@ -11,11 +11,13 @@
 		#{email}, Now())
 	</insert>
 
-	<select id="findAll" resultType="site.metacoding.red.domain.users.Users">
+	<select id="findAll"
+		resultType="site.metacoding.red.domain.users.Users">
 		SELECT * FROM users ORDER BY DESC
 	</select>
 
-	<select id="findById" resultType="site.metacoding.red.domain.users.Users">
+	<select id="findById"
+		resultType="site.metacoding.red.domain.users.Users">
 		SELECT * FROM users WHERE id = #{id}
 	</select>
 
@@ -29,7 +31,8 @@
 		Delete FROM users WHERE id = #{id}
 	</delete>
 
-	<select id="findByUsername" resultType="site.metacoding.red.domain.users.Users">
+	<select id="findByUsername"
+		resultType="site.metacoding.red.domain.users.Users">
 		SELECT * FROM users WHERE username = #{username}
 	</select>
 
@@ -37,5 +40,5 @@
 		UPDATE boards SET usersId = null WHERE usersId =
 		#{usersId}
 	</update>
-	
+
 </mapper>
