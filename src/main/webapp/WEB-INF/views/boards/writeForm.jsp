@@ -3,17 +3,37 @@
 <%@ include file="../layout/header.jsp"%>
 
 <div class="container">
-	<form action="/boards" method="post">
+	<form>
 		<div class="mb-3 mt-3">
-			<input type="text" class="form-control" placeholder="Enter title" name="title">
+			<input id="title" type="text" class="form-control" placeholder="Enter title">
 		</div>
 		<div class="mb-3">
-			<textarea class="form-control" rows="8" name="content"></textarea>
+			<textarea id="content" class="form-control" rows="8" ></textarea>
 		</div>
-		<button type="submit" class="btn btn-primary">글쓰기완료</button>
+		<button id="btnWrite" type="button" class="btn btn-primary">글쓰기완료</button>
 	</form>
 </div>
 
+<script>
+	$("#btnWrite").click(()=>{
+		let data = {
+			title: $("#title").val(),
+			content: $("#content").val(),
+		};
 
+		$.ajax("/write", {
+			type: "POST",
+			dataType: "json",
+			data: JSON.stringify(data),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		}).done((res) => {
+			if (res.code == 1) {
+				location.href = "/";
+			}
+		});
+	});
+</script>
 <%@ include file="../layout/footer.jsp"%>
 

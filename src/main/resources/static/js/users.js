@@ -79,7 +79,6 @@ function checkUsername(){
 		dataType: "json",//디폴트 json 나는 json데이터를 기대해 라는 뜻
 		async: true
 	}).done((res) => {
-		console.log(res);
 		if (res.code == 1) {
 			if (res.data == false) {
 				alert("아이디가 중복되지 않았습니다.");
@@ -93,12 +92,13 @@ function checkUsername(){
 	});
 }
 
+
 function login(){
-	alert("로그인 함수 실행됨")
 		//0.통신오브젝트 생성
 	let data = {
 		username: $("#username").val(),
-		password: $("#password").val()
+		password: $("#password").val(),
+		remember: $("#remember").prop("checked")
 	};
 
 	//1.ajax통신

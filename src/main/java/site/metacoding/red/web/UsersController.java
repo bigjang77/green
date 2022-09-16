@@ -1,5 +1,8 @@
 package site.metacoding.red.web;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -15,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import lombok.RequiredArgsConstructor;
 import site.metacoding.red.domain.users.Users;
 import site.metacoding.red.service.UsersService;
-import site.metacoding.red.utill.Script;
 import site.metacoding.red.web.dto.request.users.JoinDto;
 import site.metacoding.red.web.dto.request.users.LoginDto;
 import site.metacoding.red.web.dto.request.users.UpdateDto;
@@ -42,7 +44,17 @@ public class UsersController {
 	}
 	
 	@GetMapping("/loginForm")
-	public String loginForm() { // 쿠키 배워보기
+	public String loginForm(Model model, HttpServletRequest request) { //브라우저에 쿠키값을 요청한다
+		Cookie[] cookies = request.getCookies();
+		for(Cookie cookie : cookies) {
+			if(cookie.getName().equals("username")) {
+				model.addAttribute(cookie.getName(), cookie.getValue());
+			}
+			System.out.println("==============");
+			System.out.println(cookie.getName());
+			System.out.println(cookie.getValue());
+			System.out.println("==============");
+		}
 		return "users/loginForm";
 	}
 	
@@ -53,7 +65,21 @@ public class UsersController {
 	}
 	
 	@PostMapping("/login")
-	public @ResponseBody CMRespDto<?> login(@RequestBody LoginDto loginDto) {
+	public @ResponseBody CMRespDto<?> login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
+		System.out.println("=============");
+		System.out.println(loginDto.isRemember());
+		System.out.println("=============");
+		
+		if(loginDto.isRemember()) {
+			Cookie cookie = new Cookie("username", loginDto.getUsername()); //쿠키 메서드를 만들어준다(username을 받음)
+			cookie.setMaxAge(60*60*24);//쿠키 지속시간 로그아웃해도 남아잇다
+			response.addCookie(cookie);//쿠키를 헤더에 추가한다
+			//response.setHeader("Set-Cookie", "username: "+loginDto.getUsername());
+		}else {//쿠키를 받지 않을때
+			Cookie cookie = new Cookie("username", null);
+			cookie.setMaxAge(0);//지속시간이 0이라서 쿠키가 소멸된다
+			response.addCookie(cookie);
+		}
 		Users principal = usersService.로그인(loginDto);
 		
 		if(principal == null) {
