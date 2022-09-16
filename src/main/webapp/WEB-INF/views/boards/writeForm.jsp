@@ -8,32 +8,42 @@
 			<input id="title" type="text" class="form-control" placeholder="Enter title">
 		</div>
 		<div class="mb-3">
-			<textarea id="content" class="form-control" rows="8" ></textarea>
+			<textarea id="content" class="form-control" rows="8"></textarea>
 		</div>
-		<button id="btnWrite" type="button" class="btn btn-primary">글쓰기완료</button>
+		<button id="btnSave" type="button" class="btn btn-primary">글쓰기완료</button>
 	</form>
 </div>
 
 <script>
-	$("#btnWrite").click(()=>{
+	$("#btnSave").click(()=>{
+		save();
+		//saveTest();
+	});
+	
+	function save(){
 		let data = {
-			title: $("#title").val(),
-			content: $("#content").val(),
-		};
+				title: $("#title").val(),
+				content: $("#content").val()
+			};
+			$.ajax("/boards", {
+				type: "POST",
+				dataType: "json", // 응답 데이터
+				data: JSON.stringify(data), // http body에 들고갈 요청 데이터
+				headers: { // http header에 들고갈 요청 데이터
+					"Content-Type": "application/json"
+				}
+			}).done((res) => {
+				if (res.code == 1) {
+					location.href = "/";
+				}
+			});
+	}
+	
+</script>
 
-		$.ajax("/write", {
-			type: "POST",
-			dataType: "json",
-			data: JSON.stringify(data),
-			headers: {
-				"Content-Type": "application/json"
-			}
-		}).done((res) => {
-			if (res.code == 1) {
-				location.href = "/";
-			}
-		});
+<script>
+	$('#content').summernote({
+		height : 400
 	});
 </script>
 <%@ include file="../layout/footer.jsp"%>
-

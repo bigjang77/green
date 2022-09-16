@@ -8,22 +8,27 @@
 	<c:if test="${principal.id == boards.usersId}">
 	<div class="d-flex">
 	<a href="/boards/${boards.id}/updateForm" class="btn btn-warning">수정하러가기</a>
-		<form action="/boards/${boards.id}/delete" method="post">
+		<form>
 			<button class="btn btn-danger">삭제</button>
 		</form>
-	
 	</div>
 		</c:if>
+		
 	<br />
-	<div>
+	<div class="d-flex justify-content-between">
 		<h3>${boards.title}</h3>
+		<div>좋아요수:10 <i id="iconHeart" class="fa-regular fa-heart"></i></div>
 	</div>
 	<hr />
 
 	<div>${boards.content}</div>
-
-
 </div>
 
+<script>
+	$("#iconHeart").click((event)=>{
+		
+	});
+
+</script>
 <%@ include file="../layout/footer.jsp"%>
 

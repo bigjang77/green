@@ -105,7 +105,7 @@ public class UsersController {
 	}
 	
 	@DeleteMapping("/users/{id}")
-	public @ResponseBody CMRespDto<?> delete(@PathVariable Integer id) {
+	public @ResponseBody CMRespDto<?> delete(@PathVariable Integer id, HttpServletResponse response) {
 		usersService.회원탈퇴(id);
 		return new CMRespDto<>(1, "회원탈퇴성공", null);
 	}
