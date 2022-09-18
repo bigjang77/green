@@ -9,7 +9,7 @@
 	<div class="d-flex">
 	<a href="/boards/${boards.id}/updateForm" class="btn btn-warning">수정하러가기</a>
 		<form>
-			<button class="btn btn-danger">삭제</button>
+			<button id="btnDelete" class="btn btn-danger">삭제</button>
 		</form>
 	</div>
 		</c:if>
@@ -24,11 +24,7 @@
 	<div>${boards.content}</div>
 </div>
 
-<script>
-	$("#iconHeart").click((event)=>{
-		
-	});
-
+<script src="/js/boards.js">
 </script>
 <%@ include file="../layout/footer.jsp"%>
 

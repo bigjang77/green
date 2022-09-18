@@ -45,7 +45,7 @@ public class BoardsService {
 		return boardsDao.findById(id);
 	}
 
-	public void 게시글수정하기(Integer id, UpdateDto updateDto) {
+	public Boards 게시글수정하기(Integer id, UpdateDto updateDto) {
 		// 1. 영속화
 		Boards boardsPS = boardsDao.findById(id);
 		
@@ -57,6 +57,8 @@ public class BoardsService {
 
 		// 3. 수행
 		boardsDao.update(boardsPS);
+		
+		return boardsPS;
 	}
 
 	public void 게시글삭제하기(Integer id) {

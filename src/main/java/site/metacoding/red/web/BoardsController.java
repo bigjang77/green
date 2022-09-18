@@ -1,5 +1,6 @@
 package site.metacoding.red.web;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -29,9 +30,10 @@ public class BoardsController {
 	private final BoardsService boardsService;
 
 	@PutMapping("/boards/{id}")
-	public String update(@PathVariable Integer id, UpdateDto updateDto) {
-		boardsService.게시글수정하기(id, updateDto);
-		return "redirect:/boards/" + id;
+	public @ResponseBody CMRespDto<?> update(@PathVariable Integer id,@RequestBody UpdateDto updateDto) {
+		Boards boardsPS = boardsService.게시글수정하기(id, updateDto);
+		session.setAttribute("principal", boardsPS);
+		return new CMRespDto<>(1, "글수정성공", null) ;
 	}
 
 	@GetMapping("/boards/{id}/updateForm")
@@ -42,9 +44,9 @@ public class BoardsController {
 	}
 
 	@DeleteMapping("/boards/{id}")
-	public String deleteBoards(@PathVariable Integer id) {
+	public @ResponseBody CMRespDto<?> deleteBoards(@PathVariable Integer id, HttpServletResponse response) {
 		boardsService.게시글삭제하기(id);
-		return "redirect:/";
+		return new CMRespDto<>(1,"글삭제성공", null);
 	}
 
 	@PostMapping("/boards")

@@ -154,7 +154,7 @@ function update(){
 			alert("회원 수정 완료");
 			location.reload();//f5
 		} else {
-			alert("업데이트에 실패했습니다");
+			alert("수정에 실패했습니다");
 		}
 	});
 }
