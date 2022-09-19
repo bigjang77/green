@@ -15,14 +15,14 @@
 		FROM
 		(
 		select count(*)
-		totalCount, ceil(count(*)/#{row}) totalPage,0 currentPage, 0
+		totalCount, ceil(count(*)/#{row}) totalPage,
+		#{page} currentPage, 0
 		first, 0
 		last
-
+		FROM boards
 		<if test="keyword != null">
 			WHERE title like CONCAT('%',#{keyword},'%')
 		</if>
-
 		) result
 	</select>
 
@@ -39,22 +39,23 @@
 		WHERE id=#{id}
 	</select>
 
-  <select id="findAll"
-      resultType="site.metacoding.red.web.dto.response.boards.MainDto">
-      SELECT 
-      b.id, b.title, if(u.username is null, 'anomy', u.username) AS username
-      FROM boards b
-      LEFT OUTER JOIN
-      users u
-      ON
-      b.usersId = u.id
-      <if test="keyword != null">
-         WHERE title like CONCAT('%',#{keyword},'%')
-      </if>
-      ORDER BY b.id DESC
-      OFFSET #{startNum} ROWS
-      FETCH NEXT 5 ROWS ONLY
-   </select>
+	<select id="findAll"
+		resultType="site.metacoding.red.web.dto.response.boards.MainDto">
+		SELECT
+		b.id, b.title, if(u.username is null, 'anomy', u.username) AS username
+		FROM
+		boards b
+		LEFT OUTER JOIN
+		users u
+		ON
+		b.usersId = u.id
+		<if test="keyword != null">
+			WHERE title like CONCAT('%',#{keyword},'%')
+		</if>
+		ORDER BY b.id DESC
+		OFFSET #{startNum} ROWS
+		FETCH NEXT #{row} ROWS ONLY
+	</select>
 
 	<update id="update">
 		UPDATE boards SET title = #{title}, content =

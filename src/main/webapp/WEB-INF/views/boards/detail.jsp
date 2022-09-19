@@ -2,17 +2,18 @@
 
 <%@ include file="../layout/header.jsp"%>
 
+<input id="page" type ="hidden" value="${sessionScope.referer.page}">
+<input id="keyword" type ="hidden" value="${sessionScope.referer.keyword}">
 <div class="container">
 	<br /> <br />
 
-	<c:if test="${principal.id == boards.usersId}">
 	<div class="d-flex">
 	<a href="/boards/${boards.id}/updateForm" class="btn btn-warning">수정하러가기</a>
 		<form>
-			<button class="btn btn-danger">삭제</button>
+				<input id="id" type="hidden" value="${boards.id}"/>
+				<button id="btnDelete" class="btn btn-danger">삭제</button>
 		</form>
 	</div>
-		</c:if>
 		
 	<br />
 	<div class="d-flex justify-content-between">
@@ -29,6 +30,28 @@
 		
 	});
 
+	$("#btnDelete").click(() => {
+		remove();
+	});
+
+	function remove(){
+		let id = $("#id").val();
+
+		let page = $("#page").val();
+		let keyword = $("#keyword").val();
+		
+		$.ajax("/boards/" + id, {
+			type: "DELETE",
+			dataType: "json"
+		}).done((res) => {
+			if (res.code == 1) {
+				//document.referer로 찾으면 제일쉬움 location href = document.referrer;
+				location.href = "/?page="+page+"&keyword="+keyword;//?page=?keyword
+			} else {
+				alert("글삭제에 실패했습니다");
+			}
+		});
+	};
 </script>
 <%@ include file="../layout/footer.jsp"%>
 

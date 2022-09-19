@@ -13,7 +13,6 @@ import site.metacoding.red.domain.boards.Boards;
 import site.metacoding.red.domain.boards.BoardsDao;
 import site.metacoding.red.domain.users.Users;
 import site.metacoding.red.domain.users.UsersDao;
-import site.metacoding.red.utill.ConstVar;
 import site.metacoding.red.web.dto.request.boards.UpdateDto;
 import site.metacoding.red.web.dto.request.boards.WriteDto;
 import site.metacoding.red.web.dto.response.boards.MainDto;
@@ -30,9 +29,9 @@ public class BoardsService {
 		if (page == null) {
 			page = 0;
 		}
-		int startNum = page * ConstVar.ROW;
-		List<MainDto> boardsList = boardsDao.findAll(startNum, keyword, ConstVar.ROW);
-		PagingDto pagingDto = boardsDao.paging(page, keyword, ConstVar.ROW);
+		int startNum = page * PagingDto.ROW;
+		List<MainDto> boardsList = boardsDao.findAll(startNum, keyword, PagingDto.ROW);
+		PagingDto pagingDto = boardsDao.paging(page, keyword, PagingDto.ROW);
 		if (boardsList.size() == 0)
 			pagingDto.setNotResult(true);
 		pagingDto.makeBlockInfo(keyword);
@@ -45,7 +44,7 @@ public class BoardsService {
 		return boardsDao.findById(id);
 	}
 
-	public void 게시글수정하기(Integer id, UpdateDto updateDto) {
+	public Boards 게시글수정하기(Integer id, UpdateDto updateDto) {
 		// 1. 영속화
 		Boards boardsPS = boardsDao.findById(id);
 		
@@ -57,6 +56,8 @@ public class BoardsService {
 
 		// 3. 수행
 		boardsDao.update(boardsPS);
+		
+		return boardsPS;
 	}
 
 	public void 게시글삭제하기(Integer id) {
