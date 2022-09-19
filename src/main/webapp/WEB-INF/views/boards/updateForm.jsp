@@ -5,10 +5,11 @@
 <div class="container">
 	<form>
 		<div class="mb-3 mt-3">
-			<input id="title" type="text" class="form-control" placeholder="Enter title" required="required">
+			<input id="id" type="hidden" value="${boards.id}">
+			<input id="title" type="text" class="form-control" placeholder="Enter title" value="${boards.title}">
 		</div>
 		<div class="mb-3">
-			<textarea id="content" class="form-control" rows="8" name="content" required="required"></textarea>
+			<textarea id="content" class="form-control" rows="8">${boards.content}</textarea>
 		</div>
 		<button id="btnUpdate" type="button" class="btn btn-primary">수정완료</button>
 	</form>
@@ -26,7 +27,7 @@
 		};
 		
 		let id = $("#id").val()
-
+		
 		$.ajax("/boards/" + id, {
 			type: "PUT",
 			dataType: "json",
@@ -36,14 +37,13 @@
 			}
 		}).done((res) => {
 			if (res.code == 1) {
-				alert("글 수정 완료");
-				location.reload();//f5
+				alert("게시글 수정 완료");
+				location.href="/boards/"+id;
 			} else {
 				alert("수정에 실패했습니다");
 			}
 		});
 	};
-
 </script>
 
 

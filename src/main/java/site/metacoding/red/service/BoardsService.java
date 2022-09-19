@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import lombok.RequiredArgsConstructor;
 import site.metacoding.red.domain.boards.Boards;
 import site.metacoding.red.domain.boards.BoardsDao;
+import site.metacoding.red.domain.loves.Loves;
+import site.metacoding.red.domain.loves.LovesDao;
 import site.metacoding.red.domain.users.Users;
 import site.metacoding.red.domain.users.UsersDao;
-import site.metacoding.red.utill.ConstVar;
 import site.metacoding.red.web.dto.request.boards.UpdateDto;
 import site.metacoding.red.web.dto.request.boards.WriteDto;
+import site.metacoding.red.web.dto.response.boards.DetailDto;
 import site.metacoding.red.web.dto.response.boards.MainDto;
 import site.metacoding.red.web.dto.response.boards.PagingDto;
 
@@ -25,14 +27,23 @@ public class BoardsService {
 
 	private final UsersDao usersDao;
 	private final BoardsDao boardsDao;
+	private final LovesDao lovesDao;
 
+	public void 좋아요취소(Integer id) {
+		lovesDao.deleteById(id);
+	}
+	
+	public void 좋아요(Loves loves) {
+		lovesDao.insert(loves);
+	}
+	
 	public PagingDto 게시글목록보기(Integer page, String keyword) {
 		if (page == null) {
 			page = 0;
 		}
-		int startNum = page * ConstVar.ROW;
-		List<MainDto> boardsList = boardsDao.findAll(startNum, keyword, ConstVar.ROW);
-		PagingDto pagingDto = boardsDao.paging(page, keyword, ConstVar.ROW);
+		int startNum = page * PagingDto.ROW;
+		List<MainDto> boardsList = boardsDao.findAll(startNum, keyword, PagingDto.ROW);
+		PagingDto pagingDto = boardsDao.paging(page, keyword, PagingDto.ROW);
 		if (boardsList.size() == 0)
 			pagingDto.setNotResult(true);
 		pagingDto.makeBlockInfo(keyword);
@@ -41,10 +52,14 @@ public class BoardsService {
 		return pagingDto;
 	}
 
-	public Boards 게시글상세보기(Integer id) {
-		return boardsDao.findById(id);
+	public DetailDto 게시글상세보기(Integer id, Integer principalId) {
+		return boardsDao.findByDetail(id, principalId);
 	}
 
+	public Boards 게시글수정화면데이터가져오기(Integer id) {
+		return boardsDao.findById(id);
+	}
+	
 	public Boards 게시글수정하기(Integer id, UpdateDto updateDto) {
 		// 1. 영속화
 		Boards boardsPS = boardsDao.findById(id);

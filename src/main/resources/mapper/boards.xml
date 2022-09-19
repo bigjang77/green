@@ -15,15 +15,34 @@
 		FROM
 		(
 		select count(*)
-		totalCount, ceil(count(*)/#{row}) totalPage,0 currentPage, 0
+		totalCount, ceil(count(*)/#{row}) totalPage,
+		#{page} currentPage, 0
 		first, 0
 		last
-
+		FROM boards
 		<if test="keyword != null">
 			WHERE title like CONCAT('%',#{keyword},'%')
 		</if>
-
 		) result
+	</select>
+
+	<select id="findAll"
+		resultType="site.metacoding.red.web.dto.response.boards.MainDto">
+		SELECT
+		b.id, b.title, if(u.username is null, 'anomy', u.username) AS
+		username
+		FROM
+		boards b
+		LEFT OUTER JOIN
+		users u
+		ON
+		b.usersId = u.id
+		<if test="keyword != null">
+			WHERE title like CONCAT('%',#{keyword},'%')
+		</if>
+		ORDER BY b.id DESC
+		OFFSET #{startNum} ROWS
+		FETCH NEXT #{row} ROWS ONLY
 	</select>
 
 	<insert id="insert">
@@ -35,26 +54,19 @@
 
 	<select id="findById"
 		resultType="site.metacoding.red.domain.boards.Boards">
-		SELECT * FROM boards
-		WHERE id=#{id}
+		SELECT * FROM boards WHERE id=#{id}
 	</select>
 
-  <select id="findAll"
-      resultType="site.metacoding.red.web.dto.response.boards.MainDto">
-      SELECT 
-      b.id, b.title, if(u.username is null, 'anomy', u.username) AS username
-      FROM boards b
-      LEFT OUTER JOIN
-      users u
-      ON
-      b.usersId = u.id
-      <if test="keyword != null">
-         WHERE title like CONCAT('%',#{keyword},'%')
-      </if>
-      ORDER BY b.id DESC
-      OFFSET #{startNum} ROWS
-      FETCH NEXT 5 ROWS ONLY
-   </select>
+	<select id="findByDetail"
+		resultType="site.metacoding.red.web.dto.response.boards.DetailDto">
+		SELECT
+		b.*,
+		(SELECT id FROM loves WHERE usersId = #{principalId} AND boardsId = #{boardsId}) lovesId,
+		(SELECT 1 FROM loves WHERE usersId = #{principalId} AND boardsId = #{boardsId}) isLoved,
+		(SELECT COUNT(*) FROM loves WHERE boardsId = #{boardsId}) loveCount
+		FROM boards b
+		WHERE b.id = #{boardsId}
+	</select>
 
 	<update id="update">
 		UPDATE boards SET title = #{title}, content =
@@ -69,6 +81,5 @@
 		UPDATE boards SET usersId = null WHERE usersId =
 		#{usersId}
 	</update>
-
 
 </mapper>
