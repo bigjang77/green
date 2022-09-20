@@ -45,6 +45,14 @@ insert into users(username, password, email, createdAt) values('ssar', '1234', '
 insert into users(username, password, email, createdAt) values('cos', '1234', 'cos@nate.com', NOW());
 insert into users(username, password, email, createdAt) values('hong', '1234', 'hong@nate.com', NOW());
 COMMIT;
+
+create table loves(
+    id int primary KEY auto_increment,
+    usersId int,
+    boardsId INT,
+    createdAt TIMESTAMP,
+    UNIQUE uk_loves (usersId,boardsId)
+);
 ```
 
 ### 더미데이터 추가

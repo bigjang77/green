@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
 import site.metacoding.red.domain.boards.Boards;
+import site.metacoding.red.domain.loves.Loves;
 import site.metacoding.red.domain.users.Users;
 import site.metacoding.red.service.BoardsService;
 import site.metacoding.red.web.dto.request.boards.UpdateDto;
@@ -32,15 +33,30 @@ public class BoardsController {
 	private final HttpSession session;
 	private final BoardsService boardsService;
 
+	@DeleteMapping("/boards/{id}/loves/{lovesId}")
+	public @ResponseBody CMRespDto<?> deleteLoves(@PathVariable Integer id, @PathVariable Integer lovesId){
+		boardsService.좋아요취소(lovesId);
+		return new CMRespDto<>(1, "좋아요 취소 성공", null);
+	}
+
+	// 어떤 게시글을 누가 좋아하는지 (boardsId, usersId)
+	@PostMapping("/boards/{id}/loves")
+	public @ResponseBody CMRespDto<?> insertLoves(@PathVariable Integer id){
+		Users principal = (Users) session.getAttribute("principal");
+		Loves loves = new Loves(principal.getId(), id);
+		boardsService.좋아요(loves);
+		return new CMRespDto<>(1, "좋아요 성공", loves);
+	}
+
 	@PutMapping("/boards/{id}")
-	public @ResponseBody CMRespDto<?> update(@PathVariable Integer id,@RequestBody UpdateDto updateDto) {
-		Boards boardsPS = boardsService.게시글수정하기(id, updateDto);
-		return new CMRespDto<>(1, "글수정성공", null) ;
+	public @ResponseBody CMRespDto<?> update(@PathVariable Integer id, @RequestBody UpdateDto updateDto) {
+		boardsService.게시글수정하기(id, updateDto);
+		return new CMRespDto<>(1, "글수정성공", null);
 	}
 
 	@GetMapping("/boards/{id}/updateForm")
 	public String updateForm(@PathVariable Integer id, Model model) {
-		Boards boardsPS = boardsService.게시글상세보기(id);
+		Boards boardsPS = boardsService.게시글수정화면데이터가져오기(id);
 		model.addAttribute("boards", boardsPS);
 		return "boards/updateForm";
 	}
@@ -48,7 +64,7 @@ public class BoardsController {
 	@DeleteMapping("/boards/{id}")
 	public @ResponseBody CMRespDto<?> deleteBoards(@PathVariable Integer id) {
 		boardsService.게시글삭제하기(id);
-		return new CMRespDto<>(1,"게시글삭제", null);
+		return new CMRespDto<>(1, "게시글삭제", null);
 	}
 
 	@PostMapping("/boards")
@@ -62,7 +78,6 @@ public class BoardsController {
 	public String getBoardList(Model model, Integer page, String keyword) {
 		PagingDto pagingDto = boardsService.게시글목록보기(page, keyword);
 		model.addAttribute("pagingDto", pagingDto);
-		
 		Map<String, Object> referer = new HashMap<>();
 		referer.put("page", pagingDto.getCurrentPage());
 		referer.put("keyword", pagingDto.getKeyword());
@@ -72,7 +87,12 @@ public class BoardsController {
 
 	@GetMapping("/boards/{id}")
 	public String getBoardDetail(@PathVariable Integer id, Model model) {
-		model.addAttribute("boards", boardsService.게시글상세보기(id));
+		Users principal = (Users) session.getAttribute("principal");
+		if (principal == null) {
+			model.addAttribute("detailDto", boardsService.게시글상세보기(id, 0));//로그인안함
+		} else {
+			model.addAttribute("detailDto", boardsService.게시글상세보기(id, principal.getId()));//로그인함
+		}
 		return "boards/detail";
 	}
 
@@ -85,4 +105,3 @@ public class BoardsController {
 		return "boards/writeForm";
 	}
 }
-

@@ -1,57 +1,110 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 
 <%@ include file="../layout/header.jsp"%>
 
-<input id="page" type ="hidden" value="${sessionScope.referer.page}">
-<input id="keyword" type ="hidden" value="${sessionScope.referer.keyword}">
+<input id="page" type="hidden" value="${sessionScope.referer.page}">
+<input id="keyword" type="hidden" value="${sessionScope.referer.keyword}">
+
 <div class="container">
-	<br /> <br />
+	<br /> <br /> 
+	<input id="id" type="hidden" value="${detailDto.id}" />
+	<input id="lovesId" type="hidden" value="${detailDto.lovesId}" />
 
 	<div class="d-flex">
-	<a href="/boards/${boards.id}/updateForm" class="btn btn-warning">수정하러가기</a>
+		<a href="/boards/${detailDto.id}/updateForm" class="btn btn-warning">수정하러가기</a>
 		<form>
-				<input id="id" type="hidden" value="${boards.id}"/>
-				<button id="btnDelete" class="btn btn-danger">삭제</button>
+			<button id="btnDelete" class="btn btn-danger">삭제</button>
 		</form>
 	</div>
-		
+
 	<br />
 	<div class="d-flex justify-content-between">
-		<h3>${boards.title}</h3>
-		<div>좋아요수:10 <i id="iconHeart" class="fa-regular fa-heart"></i></div>
+		<h3>${detailDto.title}</h3>
+		<div>
+			좋아요수:<span id="countLove">${detailDto.loveCount}</span>
+			<i id="iconLove" class='${detailDto.loved ? "fa-solid" : "fa-regular"} fa-heart my_pointer my_red'></i>
+		</div>
 	</div>
 	<hr />
 
-	<div>${boards.content}</div>
+	<div>${detailDto.content}</div>
 </div>
 
 <script>
-	$("#iconHeart").click((event)=>{
-		
+$("#btnDelete").click(() => {
+	remove();
+});
+function remove(){
+	let id = $("#id").val();
+	let page = $("#page").val();
+	let keyword = $("#keyword").val();
+	
+	$.ajax("/boards/" + id, {
+		type: "DELETE",
+		dataType: "json"
+	}).done((res) => {
+		if (res.code == 1) {
+			//document.referer로 찾으면 제일쉬움 location href = document.referrer;
+			location.href = "/?page="+page+"&keyword="+keyword;//?page=?keyword
+		} else {
+			alert("글삭제에 실패했습니다");
+		}
 	});
-
-	$("#btnDelete").click(() => {
-		remove();
+};
+$("#iconLove").click(()=>{
+	let isLovedState = $("#iconLove").hasClass("fa-solid");
+	if(isLovedState){
+		deleteLove();
+	}else{
+		insertLove();
+	}
+});
+function insertLove(){
+	let id = $("#id").val();
+	
+	$.ajax("/boards/"+id+"/loves", {
+		type: "POST",
+		dataType: "json"
+	}).done((res) => {
+		if (res.code == 1) {
+			renderLoves();
+			// 좋아요 수 1 증가
+			let count = $("#countLove").text();
+			$("#countLove").text(Number(count)+1);
+			$("#lovesId").val(res.data.id);
+		}else{
+			alert("좋아요 실패했습니다");
+		}
 	});
-
-	function remove(){
-		let id = $("#id").val();
-
-		let page = $("#page").val();
-		let keyword = $("#keyword").val();
-		
-		$.ajax("/boards/" + id, {
-			type: "DELETE",
-			dataType: "json"
-		}).done((res) => {
-			if (res.code == 1) {
-				//document.referer로 찾으면 제일쉬움 location href = document.referrer;
-				location.href = "/?page="+page+"&keyword="+keyword;//?page=?keyword
-			} else {
-				alert("글삭제에 실패했습니다");
-			}
-		});
-	};
+}
+// DB에 delete 요청하기
+function deleteLove(){
+	let id = $("#id").val();
+	let lovesId = $("#lovesId").val();
+	
+	$.ajax("/boards/"+id+"/loves/"+lovesId, {
+		type: "DELETE",
+		dataType: "json"
+	}).done((res) => {
+		if (res.code == 1) {
+			renderCancelLoves();
+			let count = $("#countLove").text();
+			$("#countLove").text(Number(count)-1);
+		}else{
+			alert("좋아요 취소에 실패했습니다");
+		}
+	});
+}
+// 빨간색 하트 그리기
+function renderLoves(){
+	$("#iconLove").removeClass("fa-regular");
+	$("#iconLove").addClass("fa-solid");
+}
+// 검정색 하트 그리기
+function renderCancelLoves(){
+	$("#iconLove").removeClass("fa-solid");
+	$("#iconLove").addClass("fa-regular");
+}
 </script>
 <%@ include file="../layout/footer.jsp"%>
-

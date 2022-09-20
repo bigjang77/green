@@ -11,19 +11,32 @@ import org.springframework.web.bind.annotation.PathVariable;
 import lombok.RequiredArgsConstructor;
 import site.metacoding.red.domain.boards.Boards;
 import site.metacoding.red.domain.boards.BoardsDao;
+import site.metacoding.red.domain.loves.Loves;
+import site.metacoding.red.domain.loves.LovesDao;
 import site.metacoding.red.domain.users.Users;
 import site.metacoding.red.domain.users.UsersDao;
 import site.metacoding.red.web.dto.request.boards.UpdateDto;
 import site.metacoding.red.web.dto.request.boards.WriteDto;
+import site.metacoding.red.web.dto.response.boards.DetailDto;
 import site.metacoding.red.web.dto.response.boards.MainDto;
 import site.metacoding.red.web.dto.response.boards.PagingDto;
+import site.metacoding.red.web.dto.response.loves.LovesDto;
 
 @RequiredArgsConstructor
 @Service
 public class BoardsService {
 
-	private final UsersDao usersDao;
 	private final BoardsDao boardsDao;
+	private final LovesDao lovesDao;
+
+	public Loves 좋아요(Loves loves) {
+		lovesDao.insert(loves);
+		return loves;
+	}
+
+	public void 좋아요취소(Integer lovesId) {
+		lovesDao.deleteById(lovesId);
+	}
 
 	public PagingDto 게시글목록보기(Integer page, String keyword) {
 		if (page == null) {
@@ -40,15 +53,19 @@ public class BoardsService {
 		return pagingDto;
 	}
 
-	public Boards 게시글상세보기(Integer id) {
+	public DetailDto 게시글상세보기(Integer id, Integer principalId) {
+		return boardsDao.findByDetail(id, principalId);
+	}
+
+	public Boards 게시글수정화면데이터가져오기(Integer id) {
 		return boardsDao.findById(id);
 	}
 
 	public Boards 게시글수정하기(Integer id, UpdateDto updateDto) {
 		// 1. 영속화
 		Boards boardsPS = boardsDao.findById(id);
-		
-		if(boardsPS == null) {
+
+		if (boardsPS == null) {
 		}
 
 		// 2. 변경
@@ -56,16 +73,16 @@ public class BoardsService {
 
 		// 3. 수행
 		boardsDao.update(boardsPS);
-		
+
 		return boardsPS;
 	}
 
 	public void 게시글삭제하기(Integer id) {
 		Boards boardsPS = boardsDao.findById(id);
-		
-		if(boardsPS == null) {
+
+		if (boardsPS == null) {
 		}
-		
+
 		boardsDao.deleteById(id);
 	}
 

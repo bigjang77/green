@@ -42,7 +42,8 @@
 	<select id="findAll"
 		resultType="site.metacoding.red.web.dto.response.boards.MainDto">
 		SELECT
-		b.id, b.title, if(u.username is null, 'anomy', u.username) AS username
+		b.id, b.title, if(u.username is null, 'anomy', u.username) AS
+		username
 		FROM
 		boards b
 		LEFT OUTER JOIN
@@ -55,6 +56,19 @@
 		ORDER BY b.id DESC
 		OFFSET #{startNum} ROWS
 		FETCH NEXT #{row} ROWS ONLY
+	</select>
+
+	<select id="findByDetail"
+		resultType="site.metacoding.red.web.dto.response.boards.DetailDto">
+		Select
+		bo.* ,
+		lo.id lovesId,
+		if(lo.id Is null, 0, 1) isLoved,
+		(Select count(*) from loves where boardsId =#{boardsId}) loveCount
+		from boards bo
+		Left Outer join (Select * from loves where usersId = #{principalId}) lo
+		on bo.id = lo.boardsId
+		where bo.id =#{boardsId}
 	</select>
 
 	<update id="update">
