@@ -52,7 +52,7 @@ function join(){
 	};
 
 	//1.AJax 통신
-	$.ajax("/join", {
+	$.ajax("/api/join", {
 		type: "POST",
 		dataType: "json",
 		data: JSON.stringify(data),
@@ -102,7 +102,7 @@ function login(){
 	};
 
 	//1.ajax통신
-	$.ajax("/login", {
+	$.ajax("/api/login", {
 		type: "POST",
 		dataType: "json",
 		data: JSON.stringify(data),
@@ -121,7 +121,7 @@ function login(){
 function resign(){
 		let id = $("#id").val();
 
-	$.ajax("/users/" + id, {
+	$.ajax("/s/api/users/" + id, {
 		type: "DELETE",
 		dataType: "json"
 	}).done((res) => {
@@ -142,7 +142,7 @@ function update(){
 
 	let id = $("#id").val();
 
-	$.ajax("/users/" + id, {
+	$.ajax("/s/api/users/" + id, {
 		type: "PUT",
 		dataType: "json",
 		data: JSON.stringify(data),
