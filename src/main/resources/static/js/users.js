@@ -38,14 +38,14 @@ function join() {
 	}
 
 	if (koreanCheck() == true) {
-		alert("유저네임에 한글이 있으면 안됩니다");
+		alert("한글이 있으면 안됩니다");
 		return;
 	}
 
-/*	if (upperCheck() == false) {
-		alert("유저네임에 대문자가 있어야합니다");
-		return;
-	}*/
+	/*	if (upperCheck() == false) {
+			alert("유저네임에 대문자가 있어야합니다");
+			return;
+		}*/
 
 	if (emailCheck() == false) {
 		alert("이메일 형식에 맞게 작성하세요");
@@ -117,6 +117,17 @@ function checkUsername() {
 
 
 function login() {
+	if (koreanCheck() == true) {
+		alert("한글이 있으면 안됩니다");
+		return;
+	}
+
+	if (nullCheck() == true) {
+		alert("공백을 제거하세요");
+		return;
+	}
+
+
 	//0.통신오브젝트 생성
 	let data = {
 		username: $("#username").val(),
@@ -158,6 +169,16 @@ function resign() {
 }
 
 function update() {
+	if (emailCheck() == false) {
+		alert("이메일 형식에 맞게 작성하세요");
+		return;
+	}
+
+	if (nullCheck() == true) {
+		alert("공백을 제거하세요");
+		return;
+	}
+
 	let data = {
 		password: $("#password").val(),
 		email: $("#email").val()
@@ -182,18 +203,60 @@ function update() {
 	});
 }
 
-function joinValidationCheck() {
-	koreanCheck();
-	emailCheck();
-	upperCheck();
+
+function koreanCheck() {
+	let username = $("#username").val();
+	let password = $("#password").val();
+	let email = $("#email").val();
+	let korRule = /^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]*$/;
+	if (korRule.test(username)) {
+		return true;
+	} else {
+
+	}
+
+	if (korRule.test(password)) {
+		return true;
+	} else {
+
+	}
+
+	if (korRule.test(email)) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 
 
-function koreanCheck() {
+function emailCheck() {
+	let email = $("#email").val();
+	let emailRule = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+	if (emailRule.test(email)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
+function nullCheck() {
 	let username = $("#username").val();
-	let korRule = /^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]*$/;
-	if (korRule.test(username)) {
+	let password = $("#password").val();
+	let email = $("#email").val();
+	let nullRule = /[\s]/g;
+	if (nullRule.test(username)) {
+		return true;
+	} else {
+
+	}
+	if (nullRule.test(password)) {
+		return true;
+	} else {
+
+	}
+	if (nullRule.test(email)) {
 		return true;
 	} else {
 		return false;
@@ -210,49 +273,4 @@ function koreanCheck() {
 	}
 }*/
 
-function emailCheck() {
-	let email = $("#email").val();
-	let emailRule = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
-	if (emailRule.test(email)) {
-		return true;
-	} else {
-		return false;
-	}
-}
 
-function nullCheck() {
-	nullUsernameCheck();
-	nullPasswordCheck();
-	nullEmailCheck();
-}
-
-
-function nullUsernameCheck() {
-	let username = $("#username").val();
-	let nullRule = /[\s]/g;
-	if (nullRule.test(username)) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-function nullPasswordCheck() {
-	let password = $("#password").val();
-	let nullRule = /[\s]/g;
-	if (nullRule.test(password)) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-function nullEmailCheck() {
-	let email = $("#email").val();
-	let nullRule = /[\s]/g;
-	if (nullRule.test(email)) {
-		return true;
-	} else {
-		return false;
-	}
-}
