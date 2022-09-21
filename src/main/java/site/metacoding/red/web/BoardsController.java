@@ -60,6 +60,8 @@ public class BoardsController {
 	//인증필요
 	@GetMapping("/s/boards/{id}/updateForm")
 	public String updateForm(@PathVariable Integer id, Model model) {
+		
+
 		Boards boardsPS = boardsService.게시글수정화면데이터가져오기(id);
 		model.addAttribute("boards", boardsPS);
 		return "boards/updateForm";
